@@ -1,4 +1,4 @@
-"use client"
+
 import {
     Select,
     SelectContent,
@@ -38,6 +38,7 @@ export default function Filters(){
             <div className = {'flex gap-4'}>
                 <Grid className = {'cursor-pointer'} onClick = {()=>{setView("grid") ;console.log(view)}}/>
                 <List className = {'cursor-pointer'}  onClick = {()=>{setView("list") ;console.log(view)}}/>
+                    {view}
             </div>
 
         </div>

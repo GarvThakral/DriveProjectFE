@@ -13,15 +13,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-interface CardProps {
-  id?: number;
-  fileName?: string;
-  fileSize?: string;
-  creationDate?: string;
-  starred?: boolean;
-  previewLink?: string;
-  fileType?: string;
-}
+import { CardProps } from '../interfaces/cardInterface';
 
 
 export default function CardHorizontal(props: CardProps) {

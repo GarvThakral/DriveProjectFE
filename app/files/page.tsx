@@ -1,6 +1,4 @@
 "use client"
-import { Input } from "@/components/ui/input"
-import Card from '../components/card';
 import NavBar from '../components/navbar';
 import StorageAlert from '../components/storageAlert';
 import { Sidebar } from '../components/sidebar';
@@ -50,7 +48,7 @@ export default function Home(){
 
     }
     const [ dragover , setDragOver ] = useState(false);
-
+    
     return(
             <div className='h-screen w-full flex flex-col overflow-hidden' >
                 <NavBar />

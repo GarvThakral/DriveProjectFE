@@ -1,14 +1,7 @@
 import { FileChartColumnIncreasingIcon, EllipsisVerticalIcon, StarIcon } from "lucide-react";
 import { useView } from "./atoms";
+import { CardProps } from "../interfaces/cardInterface";
 
-interface CardProps {
-    id?: Number;
-    fileName?: string;
-    fileSize?: string;
-    creationDate?: string;
-    starred?: Boolean;
-    previewLink?: string;
-}
 
 export default function Card(props: CardProps) {
     function handleDragEnter(event:React.DragEvent<HTMLDivElement>){
@@ -36,21 +29,21 @@ export default function Card(props: CardProps) {
                 <div className={'flex justify-between items-center'}>
                     <div className={'flex items-center text-xl'}>
                         <FileChartColumnIncreasingIcon stroke="blue" />
-                        <span>Image.png</span>
+                        <span>{props.fileName}</span>
                     </div>
                     <span>
                         <EllipsisVerticalIcon />
                     </span>
                 </div>
                 <span className={'text-sm font-light'}>
-                    19.24 MB
+                    {props.fileSize?.toString()}
                 </span>
             </div>
             <div className={'h-full w-[95%] mx-auto rounded-xl overflow-hidden shadow-sm'}>
                 <img src={"./test1.png"} alt={'Hi'} className={'object-fill h-full w-full'}></img>
             </div>
             <div className={'h-full flex justify-between items-center text-sm font-light'}>
-                <div>19/8/2024</div>
+                <div>{props.creationDate}</div>
                 <StarIcon />
             </div>
         </div>

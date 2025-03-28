@@ -7,6 +7,7 @@ import BreadCrumbFooter from '../components/breadCrumb';
 import Contents from '../components/contents';
 import { useState } from 'react';
 import axios from 'axios';
+import { useContents } from '../components/atoms';
 export default function Home(){
     function handleDragEnter(event:React.DragEvent<HTMLDivElement>){
         event.preventDefault();
@@ -42,13 +43,13 @@ export default function Home(){
                 }
             }
         );
-
+        
         console.log("File uploaded successfully", uploadResponse);
         return uploadResponse;      
 
     }
     const [ dragover , setDragOver ] = useState(false);
-    
+    const { contents , setContents } = useContents();
     return(
             <div className='h-screen w-full flex flex-col overflow-hidden' >
                 <NavBar />

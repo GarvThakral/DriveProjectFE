@@ -56,20 +56,18 @@ export default function CardHorizontal(props: CardProps) {
   };
 
   return (
-    <TableBody>
         <TableRow>
             <TableCell className="w-[11%]" ><StarIcon className = {'mx-auto'} /></TableCell>
             <TableCell className="w-[15.5%] flex items-center gap-2">
                 <div className="">
                     <FileIcon className="stroke-blue-500" />
                 </div>
-                TextFile.png
+                {props.fileName}
             </TableCell>
-            <TableCell className="w-[24.5%] text-right">19 November</TableCell>
-            <TableCell className="w-[24.5%] text-right">19.24 MB</TableCell>
+            <TableCell className="w-[24.5%] text-right">{props.creationDate}</TableCell>
+            <TableCell className="w-[24.5%] text-right">{JSON.stringify(props.fileSize)}</TableCell>
             <TableCell className="w-[24.5%]"><EllipsisVerticalIcon className="ml-auto" /></TableCell>
         </TableRow>
-    </TableBody>
   
   );
 }

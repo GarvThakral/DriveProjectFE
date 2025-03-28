@@ -40,7 +40,7 @@ export default function Card(props: CardProps) {
                 </span>
             </div>
             <div className={'h-full w-[95%] mx-auto rounded-xl overflow-hidden shadow-sm'}>
-                <img src={"./test1.png"} alt={'Hi'} className={'object-fill h-full w-full'}></img>
+                <img src={"https://cloudstorageproject123123123123.s3.us-east-1.amazonaws.com/"+props.fileName} alt={'Hi'} className={'object-fill h-full w-full'}></img>
             </div>
             <div className={'h-full flex justify-between items-center text-sm font-light'}>
                 <div>{props.creationDate}</div>

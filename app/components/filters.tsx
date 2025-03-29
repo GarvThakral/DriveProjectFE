@@ -7,17 +7,28 @@ import {
 } from "@/components/ui/select";
 import { Grid, List } from "lucide-react";
 import { useContents, useView } from "./atoms";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import { fileResponse } from "../interfaces/fileReponseInterface";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
+import axios from "axios";
+import { useParams } from "next/navigation";
+  
+const API_URL = process.env.NEXTAUTH_URL
+console.log(API_URL)
 export default function Filters() {
+    const params = useParams()
+    const folderNameRef = useRef<HTMLInputElement>(null);
     const { view, setView } = useView();
     const { contents, setContents } = useContents();
     const [dateFilter, setDateFilter] = useState("any");
     const [sizeFilter, setSizeFilter] = useState("any");
-    const [originalContents, setOriginalContents] = useState([]);
+    const [originalContents, setOriginalContents] = useState<fileResponse[]>([]);
 
     useEffect(() => {
-        // Store the original contents on the first render
         if (originalContents.length === 0 && contents.length > 0) {
             setOriginalContents(contents);
         }
@@ -56,6 +67,25 @@ export default function Filters() {
         }
     }, [dateFilter, sizeFilter]);
 
+    async function createFolder() {
+        const token = localStorage.getItem('token');
+        const folderName = folderNameRef.current?.value;
+        const parentFolder = params.files[params.files?.length-1] || "files";
+        
+        try {
+            const createdFolder = await axios.post(
+                `http://localhost:3002/folder/create/${folderName}/${parentFolder}`,
+                {},
+                {
+                    headers: { token }
+                }
+            );
+            console.log(createdFolder);
+        } catch (error) {
+            console.error("Error creating folder:", error);
+        }
+    }
+
     return (
         <div className="h-14 w-full flex justify-between overflow-hidden">
             <div className="flex gap-4 items-center">
@@ -80,21 +110,28 @@ export default function Filters() {
                         <SelectItem value="smallest">Smallest First</SelectItem>
                     </SelectContent>
                 </Select>
+                <Popover>
+                    <PopoverTrigger  className = {'border-1 p-1.5 px-6 rounded-sm shadow-xs'}>Create Folder</PopoverTrigger>
+                    <PopoverContent className = {'flex items-center'}><input ref = {folderNameRef} placeholder = {'folder name'}/><button onClick = {()=>createFolder()}>Create</button></PopoverContent>
+                </Popover>
             </div>
-            <div className="flex gap-4">
+
+            <div className="flex gap-2 items-center ">
                 <Grid
-                    className="cursor-pointer"
+                    className="cursor-pointer p-2 hover:bg-slate-200 rounded-2xl"
                     onClick={() => {
                         setView("grid");
                         console.log(view);
                     }}
+                    size = {40}
                 />
                 <List
-                    className="cursor-pointer"
+                    className="cursor-pointer p-2 hover:bg-slate-200 rounded-2xl"
                     onClick={() => {
                         setView("list");
                         console.log(view);
                     }}
+                    size = {40}
                 />
             </div>
         </div>

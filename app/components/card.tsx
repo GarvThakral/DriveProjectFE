@@ -1,9 +1,22 @@
-import { FileChartColumnIncreasingIcon, EllipsisVerticalIcon, StarIcon } from "lucide-react";
+"use client"
+import { FileChartColumnIncreasingIcon, EllipsisVerticalIcon, StarIcon, StarOffIcon, DeleteIcon, TrashIcon, DownloadIcon, ShareIcon, PackageOpenIcon } from "lucide-react";
 import { useView } from "./atoms";
 import { CardProps } from "../interfaces/cardInterface";
-
+import axios from "axios";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Card(props: CardProps) {
+
+    const [ starred , setStarred ] = useState(props.starred);
+
     function handleDragEnter(event:React.DragEvent<HTMLDivElement>){
         event.preventDefault();
     }
@@ -16,6 +29,25 @@ export default function Card(props: CardProps) {
         event.preventDefault();
     }
     const { view , setView } = useView();
+
+    async function starFile(){
+        const fileStatus = await axios.post('http://localhost:3002/files/star/'+props.id,{},
+            {headers:{
+                token:localStorage.getItem('token')
+            }}
+        )
+        console.log(fileStatus);
+        setStarred((c)=>!c)
+    } 
+    async function deleteFile(){
+        const fileStatus = await axios.post('http://localhost:3002/files/delete/'+props.id,{},
+            {headers:{
+                token:localStorage.getItem('token')
+            }}
+        )
+        console.log(fileStatus);
+        setStarred((c)=>!c)
+    } 
 
     return (
         <div 
@@ -32,7 +64,17 @@ export default function Card(props: CardProps) {
                         <span>{props.fileName}</span>
                     </div>
                     <span>
-                        <EllipsisVerticalIcon />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger><EllipsisVerticalIcon/></DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel onClick = {()=>deleteFile()} className = {'flex items-center'}><TrashIcon/> Delete</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem><DownloadIcon />Download</DropdownMenuItem>
+                            <DropdownMenuItem><ShareIcon />Share</DropdownMenuItem>
+                            <DropdownMenuItem><PackageOpenIcon/>Open</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     </span>
                 </div>
                 <span className={'text-sm font-light'}>
@@ -44,7 +86,7 @@ export default function Card(props: CardProps) {
             </div>
             <div className={'h-full flex justify-between items-center text-sm font-light'}>
                 <div>{props.creationDate}</div>
-                <StarIcon />
+                {starred ? <StarIcon className = {'fill-amber-400'} onClick = {()=>starFile()}/>:<StarIcon onClick = {()=>starFile()}/>}
             </div>
         </div>
     );

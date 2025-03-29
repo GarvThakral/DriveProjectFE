@@ -5,13 +5,14 @@ import { useContents, useView } from "./atoms";
 import { Table, TableBody, TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { fileResponse } from "../interfaces/fileReponseInterface";
 
-export default function Contents({ setDragOver }: { setDragOver: (over: boolean) => void }) {
+import Folder from "./folderCard";
+
+export default function Contents({ setDragOver , params}: { setDragOver: (over: boolean) => void , params:string[]}) {
   const { view } = useView();
   const {contents, setContents} = useContents();
   const [token, setToken] = useState<string | null>(null);
-
+  console.log(`http://localhost:3002/files/${params[params?.length-1]}`)
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
@@ -24,9 +25,13 @@ export default function Contents({ setDragOver }: { setDragOver: (over: boolean)
         return;
       }
       try {
-        const filesArray = await axios.get("http://localhost:3002/files", { headers: { token } });
-        console.log(filesArray.data['Contents'])
-        setContents(filesArray.data['Contents']);
+        let filesArray;
+        if(params.length > 1){
+          filesArray = await axios.get(`http://localhost:3002/files/${params[params?.length-1]}`, { headers: { token } });
+        }
+        filesArray = await axios.get(`http://localhost:3002/files/files`, { headers: { token } });
+        console.log(filesArray.data.folderContents)
+        setContents(filesArray.data.folderContents);
       } catch (error) {
         console.error("Failed to fetch contents:", error);
       }
@@ -60,17 +65,30 @@ export default function Contents({ setDragOver }: { setDragOver: (over: boolean)
           onDragOver={handleDragOver}
           onDrop={() => setDragOver(false)}
         >
-          {contents?.map((item,index) => (
-            <Card
-              key={index}
-              id={parseInt(item.ETag)}
-              fileName={item.Key}
-              fileSize={item.Size}
-              creationDate={item.LastModified}
-              starred={false}
-              previewLink="/.test1.png"
-            />
+          {contents?.map((item, index) => (
+            item.files.map((file, fileIndex) => (
+              <Card
+                key={`${index}-${fileIndex}`}
+                id={file.id}
+                fileName={file.fileName}
+                fileSize={file.fileSize}
+                creationDate={file.lastUpdated}
+                starred={file.starred}
+                previewLink={file.previewUrl} // or adjust as needed
+              />
+            ))
           ))}
+          {contents?.map((item, index) => (
+            item.folders?.map((file, fileIndex) => (
+              <Folder
+                key={`${index}-${fileIndex}`}
+                id={index}
+                folderName="folder1"
+                folderSize={200}
+              />
+            ))
+          ))}
+            
         </div>
       ) : (
         <div className="w-[95%] rounded-xl border-2 h-fit">
@@ -85,16 +103,18 @@ export default function Contents({ setDragOver }: { setDragOver: (over: boolean)
               </TableRow>
             </TableHeader>
             <TableBody>
-              {contents?.map((item , index) => (
-                <CardHorizontal
-                  key={index}
-                  id={parseInt(item.ETag)}
-                  fileName={item.Key}
-                  fileSize={item.Size}
-                  creationDate={item.LastModified}
-                  starred={false}
-                  previewLink="/.test1.png"
-                />
+              {contents?.map((item, index) => (
+                item.files.map((file, fileIndex) => (
+                  <CardHorizontal
+                    key={`${index}-${fileIndex}`}
+                    id={file.id}
+                    fileName={file.fileName}
+                    fileSize={file.fileSize}
+                    creationDate={file.lastUpdated}
+                    starred={file.starred}
+                    previewLink={file.previewUrl} // or adjust as needed
+                  />
+                ))
               ))}
             </TableBody>
           </Table>

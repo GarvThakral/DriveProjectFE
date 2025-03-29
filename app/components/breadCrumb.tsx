@@ -9,7 +9,7 @@ import {
   
 export default function BreadCrumbFooter(){
     return(
-        <div className = {'w-full h-12 flex items-center flex-shrink-0'}>
+        <div className = {'w-full h-12 flex items-center flex-shrink-0 '}>
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>

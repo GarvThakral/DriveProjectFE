@@ -37,21 +37,21 @@ export function Sidebar() {
           <p className="text-xs text-muted-foreground">2.5 GB of 15 GB used</p>
         </div>
       </div>
-      <div className="mt-4 border-t pt-4">
-        <h3 className="mb-2 px-4 text-sm font-medium">Categories</h3>
-        <Button className="justify-start" variant="ghost">
+      <div className="mt-4 border-t pt-4 ">
+        <h3 className="mb-2 px-4 text-sm font-medium ">Categories</h3>
+        <Button className="justify-start w-full" variant="ghost">
           <Image className="mr-2 h-4 w-4" />
           Images
         </Button>
-        <Button className="justify-start" variant="ghost">
+        <Button className="justify-start w-full" variant="ghost">
           <FileText className="mr-2 h-4 w-4" />
           Documents
         </Button>
-        <Button className="justify-start" variant="ghost">
+        <Button className="justify-start w-full" variant="ghost">
           <HardDrive className="mr-2 h-4 w-4" />
           Storage
         </Button>
-        <Button className="justify-start" variant="ghost">
+        <Button className="justify-start w-full" variant="ghost">
           <Users className="mr-2 h-4 w-4" />
           Shared
         </Button>

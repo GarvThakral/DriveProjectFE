@@ -5,10 +5,12 @@ import { Sidebar } from '../components/sidebar';
 import Filters from '../components/filters';
 import BreadCrumbFooter from '../components/breadCrumb';
 import Contents from '../components/contents';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useContents } from '../components/atoms';
+import { useParams } from 'next/navigation';
 export default function Home(){
+    const params = useParams();
     function handleDragEnter(event:React.DragEvent<HTMLDivElement>){
         event.preventDefault();
         setDragOver(true);
@@ -24,12 +26,27 @@ export default function Home(){
     }
     async function handleFileDrop(event:React.DragEvent<HTMLDivElement>){
         const type = event.dataTransfer.files[0].type;
+        const size = event.dataTransfer.files[0].size;
         const name = event.dataTransfer.files[0].name;
         const file = event.dataTransfer.files[0];
         const token = localStorage.getItem('token');
         event.preventDefault();
+        let storagePath = '';
+        let len = params.files?.length ?? 0
+        for(let i = 0 ; i < len ; i++){
+            if(params.files){
+                storagePath += "/"+params.files[i];
+            }
+        }
+        console.log(storagePath);
         const preSignedResponse = await axios.post("http://localhost:3002/files/preSigned",
-            {filename:name},
+            {   
+                fileName:name,
+                fileSize:size,
+                fileType:type,
+                previewUrl:"https://<bucket-name>.s3.us-east-1.amazonaws.com/users/"+name,
+                storagePath,
+            },
             {headers:{token}}
         )
         const formData = new FormData();
@@ -48,15 +65,16 @@ export default function Home(){
         return uploadResponse;      
 
     }
+    
     const [ dragover , setDragOver ] = useState(false);
     const { contents , setContents } = useContents();
     return(
             <div className='h-screen w-full flex flex-col overflow-hidden' >
                 <NavBar />
                 <StorageAlert />
-                <div className='w-full flex flex-1 overflow-hidden p-2'>
+                <div className='w-full flex flex-1 overflow-hidden px-2'>
                     <Sidebar />
-                    <div className={`${dragover ? 'outline-dashed outline-2 outline-blue-600':''} flex flex-col w-full  p-4`}
+                    <div className={`${dragover ? 'outline-dashed outline-2 outline-blue-600':''} flex flex-col w-full  px-4`}
                         onDragEnter = {handleDragEnter} 
                         onDragLeave = {handleDragLeave} 
                         onDragOver = {handleDragOver}   
@@ -64,7 +82,7 @@ export default function Home(){
                     >
                         <Filters />
                         <div className={`  flex-1 overflow-auto`}>
-                            <Contents setDragOver={setDragOver}/>
+                            <Contents setDragOver={setDragOver} params = {params.files}/>
                         </div>
                         <BreadCrumbFooter/>
                     </div>

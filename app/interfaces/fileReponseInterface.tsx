@@ -11,6 +11,6 @@ export interface fileResponse {
       createdAt: string,
       folderId: number
     }[],
-    folders?: {}[]
+    subFolders?:FolderProps[]
   }
   

@@ -17,8 +17,6 @@ import {
 import axios from "axios";
 import { useParams } from "next/navigation";
   
-const API_URL = process.env.NEXTAUTH_URL
-console.log(API_URL)
 export default function Filters() {
     const params = useParams()
     const folderNameRef = useRef<HTMLInputElement>(null);
@@ -29,7 +27,7 @@ export default function Filters() {
     const [originalContents, setOriginalContents] = useState<fileResponse[]>([]);
 
     useEffect(() => {
-        if (originalContents.length === 0 && contents.length > 0) {
+        if (originalContents.length === 0 && contents?.length > 0) {
             setOriginalContents(contents);
         }
     }, [contents]);

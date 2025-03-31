@@ -7,18 +7,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import Folder from "./folderCard";
+import { useParams, usePathname } from "next/navigation";
 
 export default function Contents({ setDragOver , params}: { setDragOver: (over: boolean) => void , params:string[]}) {
   const { view } = useView();
+  const pathname = usePathname()
   const {contents, setContents} = useContents();
   const [token, setToken] = useState<string | null>(null);
-  console.log(`http://localhost:3002/files/${params[params?.length-1]}`)
+  const [ parentFolderId , setParentFolderId ] = useState();
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
   }, []);
 
   useEffect(() => {
+    const paramString = params[params?.length-1].slice(0,params[params?.length-1].indexOf('-'))
     const fetchContent = async () => {
       if (!token) {
         console.error("No token found");
@@ -26,11 +29,12 @@ export default function Contents({ setDragOver , params}: { setDragOver: (over: 
       }
       try {
         let filesArray;
-        if(params.length > 1){
-          filesArray = await axios.get(`http://localhost:3002/files/${params[params?.length-1]}`, { headers: { token } });
+        if(pathname != "/files"){
+          filesArray = await axios.get(`http://localhost:3002/files/${paramString}`, { headers: { token } });
+          setContents(filesArray.data.folderContents);
+          return
         }
         filesArray = await axios.get(`http://localhost:3002/files/files`, { headers: { token } });
-        console.log(filesArray.data.folderContents)
         setContents(filesArray.data.folderContents);
       } catch (error) {
         console.error("Failed to fetch contents:", error);
@@ -79,13 +83,15 @@ export default function Contents({ setDragOver , params}: { setDragOver: (over: 
             ))
           ))}
           {contents?.map((item, index) => (
-            item.folders?.map((file, fileIndex) => (
-              <Folder
-                key={`${index}-${fileIndex}`}
-                id={index}
-                folderName="folder1"
-                folderSize={200}
-              />
+            item.subFolders?.map((folder, folderIndex) => (
+                <Folder
+                  key={folder.id}
+                  id={folder.id}
+                  folderName={folder.folderName}
+                  folderSize={folder.folderSize}
+                  parentId = {folder.parentId}
+                  userId={folder.userId}
+                />
             ))
           ))}
             

@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button"
 import { Clock, Cloud, Computer, FileText, HardDrive, Image, Share, Star, Trash, UploadIcon, Users } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation";
 
 export function Sidebar() {
+  const router = useRouter();
+  const pathName = usePathname();
   return (
     <div className="hidden w-64 flex-col border-r bg-background p-4 md:flex">
-      <Button className="justify-start" variant="ghost">
+      <Button className="justify-start" variant="ghost" onClick = {()=>router.push('/files')}>
         <Cloud className="mr-2 h-4 w-4" />
         My Drive
       </Button>

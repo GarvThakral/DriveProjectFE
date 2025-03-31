@@ -32,13 +32,8 @@ export default function Home(){
         const token = localStorage.getItem('token');
         event.preventDefault();
         let storagePath = '';
-        let len = params.files?.length ?? 0
-        for(let i = 0 ; i < len ; i++){
-            if(params.files){
-                storagePath += "/"+params.files[i];
-            }
-        }
-        console.log(storagePath);
+        const folderId = parseInt(params.files[params.files?.length-1]);
+        console.log(folderId);
         const preSignedResponse = await axios.post("http://localhost:3002/files/preSigned",
             {   
                 fileName:name,
@@ -46,6 +41,7 @@ export default function Home(){
                 fileType:type,
                 previewUrl:"https://<bucket-name>.s3.us-east-1.amazonaws.com/users/"+name,
                 storagePath,
+                folderId
             },
             {headers:{token}}
         )

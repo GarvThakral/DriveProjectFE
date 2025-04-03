@@ -1,18 +1,20 @@
 "use client";
 import Card from "./card";
 import CardHorizontal from "./cardHorizontal";
-import { useContents, useView } from "./atoms";
+import { useContents, useStarred, useView } from "./atoms";
 import { Table, TableBody, TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 import Folder from "./folderCard";
 import { useParams, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default function Contents({ setDragOver , params}: { setDragOver: (over: boolean) => void , params:string[]}) {
+export default function StarredContents({ setDragOver , params}: { setDragOver: (over: boolean) => void , params:string[]}) {
   const { view } = useView();
-  const pathname = usePathname()
-  const {contents, setContents} = useContents();
+  const router = useRouter();
+  const pathname = usePathname();
+  const {contents, setContents} = useStarred();
   const [token, setToken] = useState<string | null>(null);
   const [ parentFolderId , setParentFolderId ] = useState();
   useEffect(() => {
@@ -21,24 +23,13 @@ export default function Contents({ setDragOver , params}: { setDragOver: (over: 
   }, []);
 
   useEffect(() => {
-    const paramString = params[params?.length-1].slice(0,params[params?.length-1].indexOf('-'))
     const fetchContent = async () => {
       if (!token) {
-        console.error("No token found");
-        return;
-      }
-      try {
-        let filesArray;
-        if(pathname != "/files"){
-          filesArray = await axios.get(`http://localhost:3002/files/${paramString}`, { headers: { token } });
-          setContents(filesArray.data.folderContents);
-          return
-        }
-        filesArray = await axios.get(`http://localhost:3002/files/files`, { headers: { token } });
-        setContents(filesArray.data.folderContents);
-      } catch (error) {
-        console.error("Failed to fetch contents:", error);
-      }
+        router.push('/api/auth/signin');
+      }        
+        const filesArray = await axios.get(`http://localhost:3002/files/starredFiles`, { headers: { token } });
+        setContents(filesArray.data.files);
+        return
     };
     if (token !== null) {
       fetchContent();
@@ -70,29 +61,15 @@ export default function Contents({ setDragOver , params}: { setDragOver: (over: 
           onDrop={() => setDragOver(false)}
         >
           {contents?.map((item, index) => (
-            item.files.map((file, fileIndex) => (
               <Card
-                key={`${index}-${fileIndex}`}
-                id={file.id}
-                fileName={file.fileName}
-                fileSize={file.fileSize}
-                creationDate={file.lastUpdated}
-                starred={file.starred}
-                previewLink={file.previewUrl} // or adjust as needed
+                key={`${index}-${index}`}
+                id={item.id}
+                fileName={item.fileName}
+                fileSize={item.fileSize}
+                creationDate={item.lastUpdated}
+                starred={item.starred}
+                previewLink={item.previewUrl} // or adjust as needed
               />
-            ))
-          ))}
-          {contents?.map((item, index) => (
-            item.subFolders?.map((folder, folderIndex) => (
-                <Folder
-                  key={folder.id}
-                  id={folder.id}
-                  folderName={folder.folderName}
-                  folderSize={folder.folderSize}
-                  parentId = {folder.parentId}
-                  userId={folder.userId}
-                />
-            ))
           ))}
             
         </div>

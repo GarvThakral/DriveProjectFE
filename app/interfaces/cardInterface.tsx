@@ -5,4 +5,5 @@ export interface CardProps {
     creationDate?: string;
     starred?: Boolean;
     previewLink?: string;
+    status:"ACTIVE"|"TRASH"
 }
